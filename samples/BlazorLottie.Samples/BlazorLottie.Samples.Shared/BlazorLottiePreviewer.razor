@@ -1,0 +1,130 @@
+﻿@using BlazorLottie.AnimationConfiguration
+@using BlazorLottie.RendererConfiguration
+
+<div class="page">
+    <div class="configuration-controls">
+        <AnimationConfigForm />
+        <RendererConfigForm />
+        <button>Apply</button>
+    </div>
+    <div class="animation-preview">
+        <AnimationPreview />
+    </div>
+    <div class="animation-container" @ref="_animationContainer"></div>
+</div>
+
+@code
+{
+    [Inject]
+    LottiePlayer LottiePlayer { get; set; } = null!;
+
+    private ElementReference _animationContainer;
+    private AnimationItem? _animation;
+    
+    #region Input Fields
+    private string _path = "https://assets2.lottiefiles.com/datafiles/WFKIUGAVvLl1azi/data.json";
+    private Renderer _renderer = Renderer.SVG;
+    private bool _autoplay = true;
+    private int? _initialFrame;
+    private int? _finalFrame;
+    private bool _loop = true;
+    private double _speed = 1.0;
+    private AnimationDirection _direction = AnimationDirection.Forward;
+    private bool _progressiveLoad = false;
+    private bool _hideOnTransparent = true;
+    #endregion
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ApplyConfigurationAsync();
+        }
+    }
+
+    private async Task ApplyConfigurationAsync()
+    {
+        var animationConfig = GenerateAnimationConfig();
+        _animation = await LottiePlayer.LoadAnimation(animationConfig);
+        await _animation.SetSpeed(_speed);
+        await _animation.SetDirection(_direction);
+    }
+
+    private AnimationConfig GenerateAnimationConfig()
+    {
+        var rendererConfig = GenerateRendererConfig();
+        return new AnimationConfigWithPath(_animationContainer, _path)
+        {
+            AssetsPath = null,
+            Autoplay = _autoplay,
+            InitialSegment = GetInitialSegment(),
+            Loop = _loop,
+            Name = null,
+            Renderer = _renderer,
+            RendererSettings = rendererConfig,
+        };
+    }
+
+    private AnimationSegment? GetInitialSegment()
+    {
+        if (!_initialFrame.HasValue && !_finalFrame.HasValue)
+            return null;
+
+        if (!_initialFrame.HasValue || !_finalFrame.HasValue)
+            throw new InvalidOperationException("Both or neither of the segment frames must be set, but not just one.");
+
+        return new AnimationSegment(_initialFrame.Value, _finalFrame.Value);
+    }
+
+    private BaseRendererConfig GenerateRendererConfig()
+    {
+        return _renderer switch
+        {
+            Renderer.SVG => GenerateSVGRendererConfig(),
+            Renderer.Canvas => GenerateCanvasRendererConfig(),
+            Renderer.HTML => GenerateHTMLRendererConfig(),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    private SVGRendererConfig GenerateSVGRendererConfig()
+    {
+        return new SVGRendererConfig
+        {
+            ClassName = null,
+            ImagePreserveAspectRatio = null,
+            Description = null,
+            FilterSize = null,
+            Focusable = null,
+            HideOnTransparent = _hideOnTransparent,
+            PreserveAspectRatio = null,
+            ProgressiveLoad = _progressiveLoad,
+            Title = null,
+            ViewBoxOnly = null,
+            ViewBoxSize = null
+        };
+    }
+
+    private HTMLRendererConfig GenerateHTMLRendererConfig()
+    {
+        return new HTMLRendererConfig
+        {
+            ClassName = null,
+            ImagePreserveAspectRatio = null,
+            HideOnTransparent = _hideOnTransparent
+        };
+    }
+
+    private CanvasRendererConfig GenerateCanvasRendererConfig()
+    {
+        return new CanvasRendererConfig
+        {
+            ClassName = null,
+            ImagePreserveAspectRatio = null,
+            ClearCanvas = null,
+            PreserveAspectRatio = null,
+            ProgressiveLoad = _progressiveLoad
+        };
+    }
+
+}

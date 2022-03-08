@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorLottie", "BlazorLottie\BlazorLottie.csproj", "{B9666E1F-49AE-4DD1-AE7E-6933E252F3EB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B9666E1F-49AE-4DD1-AE7E-6933E252F3EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9666E1F-49AE-4DD1-AE7E-6933E252F3EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9666E1F-49AE-4DD1-AE7E-6933E252F3EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9666E1F-49AE-4DD1-AE7E-6933E252F3EB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
