@@ -1,16 +1,27 @@
 ﻿@using BlazorLottie.AnimationConfiguration
 @using BlazorLottie.RendererConfiguration
+@using BlazorSplit
+@using BlazorSplit.OptionTypes
 
 <div class="page">
-    <div class="configuration-controls">
-        <AnimationConfigForm />
-        <RendererConfigForm />
-        <button>Apply</button>
-    </div>
-    <div class="animation-preview">
-        <AnimationPreview />
-    </div>
-    <div class="animation-container" @ref="_animationContainer"></div>
+    <Split
+        Class="split"
+        Direction="Direction.Vertical"
+    >
+        <SplitSection>
+            <div class="configuration-controls">
+                <AnimationConfigForm/>
+                <RendererConfigForm/>
+                <button>Apply</button>
+            </div>
+        </SplitSection>
+        <SplitSection>
+                <div class="animation-preview">
+                    <AnimationPreview/>
+                </div>
+                <div class="animation-container" @ref="_animationContainer"></div>
+        </SplitSection>
+    </Split>
 </div>
 
 @code
@@ -44,7 +55,7 @@
 
     private async Task ApplyConfigurationAsync()
     {
-        var animationConfig = GenerateAnimationConfig();
+        AnimationConfig animationConfig = GenerateAnimationConfig();
         _animation = await LottiePlayer.LoadAnimation(animationConfig);
         await _animation.SetSpeed(_speed);
         await _animation.SetDirection(_direction);
@@ -52,7 +63,7 @@
 
     private AnimationConfig GenerateAnimationConfig()
     {
-        var rendererConfig = GenerateRendererConfig();
+        BaseRendererConfig rendererConfig = GenerateRendererConfig();
         return new AnimationConfigWithPath(_animationContainer, _path)
         {
             AssetsPath = null,

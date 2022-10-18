@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.2" />
+    <PackageReference Include="smfields.BlazorSplit" Version="0.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,4 +25,8 @@
     <ProjectReference Include="..\..\..\src\BlazorLottie\BlazorLottie\BlazorLottie.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot" />
+  </ItemGroup>
+  
 </Project>
