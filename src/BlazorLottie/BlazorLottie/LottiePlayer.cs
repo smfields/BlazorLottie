@@ -35,9 +35,12 @@ public class LottiePlayer : IAsyncDisposable
 
     public async ValueTask<AnimationItem> LoadAnimation(AnimationConfig @params)
     {
-        IJSObjectReference module             = await _moduleTask.Value;
-        var                animationReference = await module.InvokeAsync<IJSObjectReference>("loadAnimation", @params);
-        return new AnimationItem(animationReference);
+        IJSObjectReference module                   = await _moduleTask.Value;
+        var                jsAnimationReference     = await module.InvokeAsync<IJSObjectReference>("loadAnimation", @params);
+        var                animationItem            = new AnimationItem(jsAnimationReference);
+        var                dotnetAnimationReference = DotNetObjectReference.Create(animationItem);
+        await module.InvokeVoidAsync("registerEventListeners", jsAnimationReference, dotnetAnimationReference);
+        return animationItem;
     }
 
     public async ValueTask Pause(string? name = null)

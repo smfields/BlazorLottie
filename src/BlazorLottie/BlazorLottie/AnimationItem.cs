@@ -1,10 +1,9 @@
 using System.Text.Json.Serialization;
 using BlazorLottie.AnimationConfiguration;
+using BlazorLottie.AnimationEvents;
 using Microsoft.JSInterop;
 
 namespace BlazorLottie;
-
-public delegate void AnimationEventCallback(dynamic args);
 
 public class AnimationItem
 {
@@ -20,108 +19,83 @@ public class AnimationItem
     
     #region Events
 
-    public event AnimationEventCallback? EnterFrame;
+    public event EnterFrameEventCallback?   EnterFrame;
+    public event LoopCompleteEventCallback? LoopComplete;
+    public event CompleteEventCallback?     Complete;
+    public event SegmentStartEventCallback? SegmentStart;
+    public event DestroyEventCallback?      Destroyed;
+    public event EventHandler?              ConfigReady;
+    public event EventHandler?              DataReady;
+    public event EventHandler?              DomLoaded;
+    public event EventHandler?              Error;
+    public event EventHandler?              DataFailed;      
+    public event EventHandler?              LoadedImages; 
 
-    // addEventListener<T = any>(name: AnimationEventName, callback: AnimationEventCallback<T>): () => void;
-    public void AddEventListener<T>(AnimationEventName animationEventName, AnimationEventCallback callback)
-    {
-        switch (animationEventName)
-        {
-            case AnimationEventName.EnterFrame:
-                EnterFrame += callback;
-                break;
-            case AnimationEventName.LoopComplete:
-                break;
-            case AnimationEventName.Complete:
-                break;
-            case AnimationEventName.SegmentStart:
-                break;
-            case AnimationEventName.Destroy:
-                break;
-            case AnimationEventName.ConfigReady:
-                break;
-            case AnimationEventName.DataReady:
-                break;
-            case AnimationEventName.DomLoaded:
-                break;
-            case AnimationEventName.Error:
-                break;
-            case AnimationEventName.DataFailed:
-                break;
-            case AnimationEventName.LoadedImages:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(animationEventName), animationEventName, null);
-        }
-    }
-    
-    // removeEventListener<T = any>(name: AnimationEventName, callback?: AnimationEventCallback<T>): void;
-    public void RemoveEventListener<T>(AnimationEventName animationEventName, AnimationEventCallback? callback = null)
-    {
-        switch (animationEventName)
-        {
-            case AnimationEventName.EnterFrame:
-                EnterFrame -= callback;
-                break;
-            case AnimationEventName.LoopComplete:
-                break;
-            case AnimationEventName.Complete:
-                break;
-            case AnimationEventName.SegmentStart:
-                break;
-            case AnimationEventName.Destroy:
-                break;
-            case AnimationEventName.ConfigReady:
-                break;
-            case AnimationEventName.DataReady:
-                break;
-            case AnimationEventName.DomLoaded:
-                break;
-            case AnimationEventName.Error:
-                break;
-            case AnimationEventName.DataFailed:
-                break;
-            case AnimationEventName.LoadedImages:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(animationEventName), animationEventName, null);
-        }
-    }
-    
-    // triggerEvent<T = any>(name: AnimationEventName, args: T): void;
     [JSInvokable]
-    public void TriggerEvent(AnimationEventName animationEventName, dynamic args)
+    public virtual void OnEnterFrame(BMEnterFrameEvent args)
     {
-        switch (animationEventName)
-        {
-            case AnimationEventName.EnterFrame:
-                EnterFrame?.Invoke(args);
-                break;
-            case AnimationEventName.LoopComplete:
-                break;
-            case AnimationEventName.Complete:
-                break;
-            case AnimationEventName.SegmentStart:
-                break;
-            case AnimationEventName.Destroy:
-                break;
-            case AnimationEventName.ConfigReady:
-                break;
-            case AnimationEventName.DataReady:
-                break;
-            case AnimationEventName.DomLoaded:
-                break;
-            case AnimationEventName.Error:
-                break;
-            case AnimationEventName.DataFailed:
-                break;
-            case AnimationEventName.LoadedImages:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(animationEventName), animationEventName, null);
-        }
+        EnterFrame?.Invoke(this, args);
     }
-
+    
+    [JSInvokable]
+    public virtual void OnLoopComplete(BMLoopCompleteEvent args)
+    {
+        LoopComplete?.Invoke(this, args);
+    }
+    
+    [JSInvokable]
+    public virtual void OnComplete(BMCompleteEvent args)
+    {
+        Complete?.Invoke(this, args);
+    }
+    
+    [JSInvokable]
+    public virtual void OnSegmentStart(BMSegmentStartEvent args)
+    {
+        SegmentStart?.Invoke(this, args);
+    }
+    
+    [JSInvokable]
+    public virtual void OnDestroy(BMDestroyEvent args)
+    {
+        Destroyed?.Invoke(this, args);
+    }
+        
+    [JSInvokable]
+    public virtual void OnConfigReady()
+    {
+        ConfigReady?.Invoke(this, EventArgs.Empty);
+    }
+    
+    [JSInvokable]
+    public virtual void OnDataReady()
+    {
+        DataReady?.Invoke(this, EventArgs.Empty);
+    }
+    
+    [JSInvokable]
+    public virtual void OnDomLoaded()
+    {
+        DomLoaded?.Invoke(this, EventArgs.Empty);
+    }
+    
+    [JSInvokable]
+    public virtual void OnError()
+    {
+        Error?.Invoke(this, EventArgs.Empty);
+    }         
+    
+    [JSInvokable]                            
+    public virtual void OnDataFailed()            
+    {                                        
+        DataFailed?.Invoke(this, EventArgs.Empty);
+    }           
+    
+    [JSInvokable]                            
+    public virtual void OnLoadedImages()            
+    {                                        
+        LoadedImages?.Invoke(this, EventArgs.Empty);
+    }   
     #endregion
 
     #region Properties

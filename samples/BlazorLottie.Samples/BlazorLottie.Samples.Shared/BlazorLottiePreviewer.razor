@@ -1,27 +1,9 @@
 ﻿@using BlazorLottie.AnimationConfiguration
 @using BlazorLottie.RendererConfiguration
-@using BlazorSplit
-@using BlazorSplit.OptionTypes
 
 <div class="page">
-    <Split
-        Class="split"
-        Direction="Direction.Vertical"
-    >
-        <SplitSection>
-            <div class="configuration-controls">
-                <AnimationConfigForm/>
-                <RendererConfigForm/>
-                <button>Apply</button>
-            </div>
-        </SplitSection>
-        <SplitSection>
-                <div class="animation-preview">
-                    <AnimationPreview/>
-                </div>
-                <div class="animation-container" @ref="_animationContainer"></div>
-        </SplitSection>
-    </Split>
+    <div class="animation-container" @ref="_animationContainer"></div>
+    <p>@_currentTime</p>
 </div>
 
 @code
@@ -31,6 +13,8 @@
 
     private ElementReference _animationContainer;
     private AnimationItem? _animation;
+
+    private double _currentTime = 0;
     
     #region Input Fields
     private string _path = "https://assets2.lottiefiles.com/datafiles/WFKIUGAVvLl1azi/data.json";
@@ -59,6 +43,11 @@
         _animation = await LottiePlayer.LoadAnimation(animationConfig);
         await _animation.SetSpeed(_speed);
         await _animation.SetDirection(_direction);
+        _animation.EnterFrame += (_, args) =>
+        {
+            _currentTime = args.CurrentTime / args.TotalTime * 100;
+            StateHasChanged();
+        };
     }
 
     private AnimationConfig GenerateAnimationConfig()

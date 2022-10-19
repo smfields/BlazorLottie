@@ -1,5 +1,8 @@
-namespace BlazorLottie;
+using System.Text.Json.Serialization;
 
+namespace BlazorLottie.AnimationEvents;
+
+[JsonConverter(typeof(AnimationEventNameEnumConverter))]
 public enum AnimationEventName
 {
     EnterFrame,

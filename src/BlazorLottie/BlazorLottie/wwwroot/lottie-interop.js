@@ -1,5 +1,34 @@
 import './lottie.min.js';
 
+class RegisteredEvent {
+    constructor(jsEvent, dotnetFunction) {
+        this.jsEvent = jsEvent;
+        this.dotnetFunction = dotnetFunction;
+    }
+}
+
+export function registerEventListeners(animation, dotnetObj) {
+    const events = [
+        new RegisteredEvent("enterFrame", "OnEnterFrame"),
+        new RegisteredEvent("loopComplete", "OnLoopComplete"),
+        new RegisteredEvent("complete", "OnComplete"),
+        new RegisteredEvent("segmentStart", "OnSegmentStart"),
+        new RegisteredEvent("destroy", "OnDestroy"),
+        new RegisteredEvent("config_ready", "OnConfigReady"),
+        new RegisteredEvent("data_ready", "OnDataReady"),
+        new RegisteredEvent("DOMLoaded", "OnDomLoaded"),
+        new RegisteredEvent("error", "OnError"),
+        new RegisteredEvent("data_failed", "OnDataFailed"),
+        new RegisteredEvent("loaded_images", "OnLoadedImages"),
+    ]
+
+    for (const event of events) {
+        animation.addEventListener(event.jsEvent, async (args) => {
+            await dotnetObj.invokeMethodAsync(event.dotnetFunction, args)
+        })
+    }
+}
+
 export function loadAnimation(params) {
     return lottie.loadAnimation(params);
 }
