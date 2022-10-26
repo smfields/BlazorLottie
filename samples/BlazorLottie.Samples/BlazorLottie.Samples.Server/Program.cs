@@ -1,5 +1,4 @@
 using BlazorLottie;
-using BlazorSplit;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +7,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 builder.Services.AddTransient<LottiePlayer>();
-builder.Services.AddBlazorSplit();
+builder.Services.AddSharedComponents();
 
 WebApplication? app = builder.Build();
 

@@ -33,13 +33,11 @@ public class LottiePlayer : IAsyncDisposable
         await module.InvokeVoidAsync("destroy", name);
     }
 
-    public async ValueTask<AnimationItem> LoadAnimation(AnimationConfig @params)
+    public async ValueTask<AnimationItem> LoadAnimation(ElementReference container, AnimationConfig config)
     {
         IJSObjectReference module                   = await _moduleTask.Value;
-        var                jsAnimationReference     = await module.InvokeAsync<IJSObjectReference>("loadAnimation", @params);
-        var                animationItem            = new AnimationItem(jsAnimationReference);
-        var                dotnetAnimationReference = DotNetObjectReference.Create(animationItem);
-        await module.InvokeVoidAsync("registerEventListeners", jsAnimationReference, dotnetAnimationReference);
+        var                jsAnimationReference     = await module.InvokeAsync<IJSObjectReference>("loadAnimation", container, config);
+        var                animationItem            = new AnimationItem(jsAnimationReference, config);
         return animationItem;
     }
 

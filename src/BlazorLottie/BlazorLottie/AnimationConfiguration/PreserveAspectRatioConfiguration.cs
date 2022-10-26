@@ -1,13 +1,7 @@
 namespace BlazorLottie.AnimationConfiguration;
 
-public class PreserveAspectRatioConfiguration
+public record PreserveAspectRatioConfiguration(AlignmentValue AlignmentValue)
 {
-    public AlignmentValue AlignmentValue { get; }
-    public MeetOrSlice?   MeetOrSlice    { get; }
+    public MeetOrSlice?   MeetOrSlice    { get; init; }
 
-    public PreserveAspectRatioConfiguration(AlignmentValue alignmentValue, MeetOrSlice? meetOrSlice = null)
-    {
-        AlignmentValue = alignmentValue;
-        MeetOrSlice    = meetOrSlice;
-    }
 }

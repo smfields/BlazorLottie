@@ -2,7 +2,7 @@ using BlazorLottie.AnimationConfiguration;
 
 namespace BlazorLottie.RendererConfiguration;
 
-public class SVGRendererConfig : BaseRendererConfig
+public record SVGRendererConfig : BaseRendererConfig
 {
     public string?                           Description         { get; init; }
     public FilterSizeConfig?                 FilterSize          { get; init; }

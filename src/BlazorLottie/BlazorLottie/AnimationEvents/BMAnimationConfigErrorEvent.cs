@@ -4,6 +4,6 @@ public delegate void AnimationConfigErrorEventCallback(object? sender, BMAnimati
 
 public class BMAnimationConfigErrorEvent
 {
-    public dynamic NativeError { get; set; }
-    public double  CurrentTime { get; set; }
+    public dynamic NativeError { get; init; }
+    public double  CurrentTime { get; init; }
 }

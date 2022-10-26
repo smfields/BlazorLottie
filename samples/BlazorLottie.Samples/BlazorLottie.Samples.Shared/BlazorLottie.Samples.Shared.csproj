@@ -12,7 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.2" />
+    <PackageReference Include="Blazorise.Bootstrap" Version="1.1.2" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.9" />
     <PackageReference Include="smfields.BlazorSplit" Version="0.0.3" />
   </ItemGroup>
 

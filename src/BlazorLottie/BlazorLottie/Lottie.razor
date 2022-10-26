@@ -1,0 +1,146 @@
+﻿@using BlazorLottie.AnimationConfiguration
+@implements IAsyncDisposable
+
+<div
+    class="@Class" 
+    style="@Style"
+    title="@Title"
+    role="@AriaRole"
+    aria-label="@AriaLabel"
+    tabindex="0"
+    @ref="_animationContainerReference"
+></div>
+
+@code {
+
+    [Parameter]
+    public string? Class { get; set; }
+
+    [Parameter]
+    public string? Style { get; set; }
+
+    [Parameter]
+    public bool Stopped { get; set; } = false;
+
+    [Parameter]
+    public bool Paused { get; set; } = false;
+
+    [Parameter]
+    public AnimationDirection Direction { get; set; } = AnimationDirection.Forward;
+
+    [Parameter]
+    public double Speed { get; set; } = 1;
+
+    [Parameter]
+    public string AriaRole { get; set; } = "button";
+
+    [Parameter]
+    public string AriaLabel { get; set; } = "animation";
+
+    [Parameter]
+    public string Title { get; set; } = "";
+
+    [Parameter]
+    [EditorRequired]
+    public AnimationConfig AnimationConfig { get; set; } = default!;
+
+    [Inject]
+    private LottiePlayer LottiePlayer { get; set; } = default!;
+
+    private ElementReference _animationContainerReference;
+    private AnimationItem? _animation;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_animation is null)
+            return;
+
+        await _animation.Destroy();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+           await SynchronizeAnimationItem();
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await SynchronizeAnimationItem();
+    }
+
+    private async Task SynchronizeAnimationItem()
+    {
+        await SynchronizeConfig();
+        await SynchronizeStopped();
+        await SynchronizePaused();
+        await SynchronizeDirection();
+        await SynchronizeSpeed();
+    }
+
+    private async Task SynchronizeConfig()
+    {
+        if (_animation is not null && _animation.Config == AnimationConfig)
+        {
+            return;
+        }
+
+        if (_animation is not null)
+        {
+            await _animation.Destroy();
+        }
+            
+        _animation = await LottiePlayer.LoadAnimation(_animationContainerReference, AnimationConfig);
+    }
+
+    private async Task SynchronizeStopped()
+    {
+        ArgumentNullException.ThrowIfNull(_animation);
+
+        if (Stopped)
+        {
+            await _animation.Stop();
+        }
+    }
+
+    private async Task SynchronizePaused()
+    {
+        ArgumentNullException.ThrowIfNull(_animation);
+
+        var animationIsPaused = await _animation.IsPaused;
+        switch (Paused)
+        {
+            case true when !animationIsPaused:
+                await _animation.Pause();
+                break;
+            case false when animationIsPaused && !Stopped:
+                await _animation.Play();
+                break;
+        }
+    }
+
+    private async Task SynchronizeDirection()
+    {
+        ArgumentNullException.ThrowIfNull(_animation);
+
+        AnimationDirection animationDirection = await _animation.PlayDirection;
+        if (animationDirection != Direction)
+        {
+            await _animation.SetDirection(Direction);
+        }
+    }
+
+    private async Task SynchronizeSpeed()
+    {
+        ArgumentNullException.ThrowIfNull(_animation);
+
+        var animationSpeed = await _animation.PlaySpeed;
+        if (Math.Abs(animationSpeed - Speed) > .001)
+        {
+            await _animation.SetSpeed(Speed);
+        }
+    }
+
+}

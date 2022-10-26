@@ -1,36 +1,31 @@
 import './lottie.min.js';
 
-class RegisteredEvent {
-    constructor(jsEvent, dotnetFunction) {
-        this.jsEvent = jsEvent;
-        this.dotnetFunction = dotnetFunction;
+const registeredEventHandlers = {};
+
+export function loadAnimation(element, params) {
+    params.container = element;
+    const animation = lottie.loadAnimation(params);
+    
+    animation.registerEventHandler = function(dotnetObj, event, callback) {
+        registeredEventHandlers[dotnetObj._id] = {
+            [event]: {
+                [callback]: async function(args) {
+                    await dotnetObj.invokeMethodAsync(callback, args);
+                }
+            }
+        }
+        this.addEventListener(event, registeredEventHandlers[dotnetObj._id][event][callback]);
     }
-}
-
-export function registerEventListeners(animation, dotnetObj) {
-    const events = [
-        new RegisteredEvent("enterFrame", "OnEnterFrame"),
-        new RegisteredEvent("loopComplete", "OnLoopComplete"),
-        new RegisteredEvent("complete", "OnComplete"),
-        new RegisteredEvent("segmentStart", "OnSegmentStart"),
-        new RegisteredEvent("destroy", "OnDestroy"),
-        new RegisteredEvent("config_ready", "OnConfigReady"),
-        new RegisteredEvent("data_ready", "OnDataReady"),
-        new RegisteredEvent("DOMLoaded", "OnDomLoaded"),
-        new RegisteredEvent("error", "OnError"),
-        new RegisteredEvent("data_failed", "OnDataFailed"),
-        new RegisteredEvent("loaded_images", "OnLoadedImages"),
-    ]
-
-    for (const event of events) {
-        animation.addEventListener(event.jsEvent, async (args) => {
-            await dotnetObj.invokeMethodAsync(event.dotnetFunction, args)
-        })
+    
+    animation.unregisterEventListener = function(dotnetObj, event, callback) {
+        this.removeEventListener(event, registeredEventHandlers[dotnetObj._id][event][callback]);
     }
-}
 
-export function loadAnimation(params) {
-    return lottie.loadAnimation(params);
+    animation.getProperty = function(key) {
+        return this[key];
+    }
+    
+    return animation;
 }
 
 export function play(name) {
@@ -76,12 +71,3 @@ export function setLocationHref(href) {
 export function setIDPrefix(prefix) {
     lottie.setIDPrefix(prefix);
 }
-
-Object.defineProperty(Object.prototype, "getProperty",
-    {
-        value: function getProperty(key) {
-            return this[key];
-        },
-        writable: true,
-        configurable: true
-    });

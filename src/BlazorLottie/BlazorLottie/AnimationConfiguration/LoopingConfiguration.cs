@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace BlazorLottie.AnimationConfiguration;
 
 [JsonConverter(typeof(LoopConfigurationJsonConverter))]
-public class LoopingConfiguration
+public record LoopingConfiguration
 {
     public int? Iterations { get; }
 

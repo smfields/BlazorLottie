@@ -1,6 +1,6 @@
 namespace BlazorLottie.RendererConfiguration;
 
-public class HTMLRendererConfig : BaseRendererConfig
+public record HTMLRendererConfig : BaseRendererConfig
 {
     public bool? HideOnTransparent { get; init; }
 }
